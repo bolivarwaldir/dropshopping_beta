@@ -1,45 +1,35 @@
-// Auth UI enhancements
+// Robust auth UI
 async function initAuthUI() {
-  const user = await getCurrentUser();
-  const cuentaLinks = document.querySelectorAll('a[href*="cuenta"], a[href*="login"]');
-  
-  cuentaLinks.forEach(link => {
-    const parent = link.parentElement;
-    if (user) {
-      // Replace with dropdown
-      const dropdown = document.createElement('div');
-      dropdown.className = 'account-dropdown';
-      dropdown.innerHTML = `
-        <button class="account-btn">${user.user_metadata?.full_name || user.email.split('@')[0]} ▾</button>
-        <div class="dropdown-menu">
-          <a href="cuenta.html">Mi perfil</a>
-          <a href="editar-perfil.html">Editar perfil</a>
-          <button onclick="signOut()">Cerrar sesión</button>
-        </div>
-      `;
-      link.replaceWith(dropdown);
-    } else {
-      link.textContent = 'Iniciar sesión';
-      link.href = 'login.html';
-    }
-  });
+  try {
+    const user = await getCurrentUser();
+    document.querySelectorAll('a[href*="cuenta"], a[href*="login"]').forEach(link => {
+      if (user) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'account-dropdown';
+        wrapper.innerHTML = `
+          <button type="button" class="account-btn">${(user.user_metadata?.full_name || user.email.split('@')[0])} ▾</button>
+          <div class="dropdown-menu">
+            <a href="cuenta.html">Mi perfil</a>
+            <a href="editar-perfil.html">Editar perfil</a>
+            <a href="favoritos.html">Favoritos</a>
+            <button type="button" onclick="toggleTheme()">Cambiar tema</button>
+            <button type="button" onclick="signOut()">Cerrar sesión</button>
+          </div>
+        `;
+        link.parentNode.replaceChild(wrapper, link);
+      } else {
+        link.textContent = 'Iniciar sesión';
+        link.href = 'login.html';
+      }
+    });
+  } catch (e) {
+    console.log('Auth UI error:', e);
+  }
 }
 
-// Redirect after login
-if (window.location.pathname.includes('login.html') || window.location.pathname.includes('registro.html')) {
-  supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN') {
-      window.location.href = 'index.html';
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', initAuthUI);
-
-// Theme switcher
 function initTheme() {
-  const saved = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', saved);
+  const theme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', theme);
 }
 
 function toggleTheme() {
@@ -49,17 +39,14 @@ function toggleTheme() {
   localStorage.setItem('theme', next);
 }
 
-// Add theme button to dropdown if logged in
+// Auto redirect after login
+if (location.pathname.includes('login') || location.pathname.includes('registro')) {
+  supabaseClient.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_IN') location.href = 'index.html';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
-  setTimeout(() => {
-    const menu = document.querySelector('.dropdown-menu');
-    if (menu && !menu.querySelector('.theme-btn')) {
-      const btn = document.createElement('button');
-      btn.className = 'theme-btn';
-      btn.textContent = 'Cambiar tema';
-      btn.onclick = toggleTheme;
-      menu.insertBefore(btn, menu.lastElementChild);
-    }
-  }, 500);
+  initAuthUI();
 });
