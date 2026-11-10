@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito | Los Chingones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .cart-item { display: flex; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--border); align-items: center; }
+    .cart-item img { width: 100px; height: 100px; object-fit: contain; background: #fafafa; border-radius: 8px; }
+    .qty-controls { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+    .qty-btn { width: 32px; height: 32px; border: 1px solid var(--border); background: white; border-radius: 6px; cursor: pointer; font-size: 1.1rem; }
+    .qty-btn:hover { background: #f5f5f5; }
+    .remove-btn { color: #dc2626; background: none; border: none; cursor: pointer; font-size: 0.9rem; margin-top: 8px; text-decoration: underline; }
+    .cart-total { text-align: right; font-size: 1.5rem; font-weight: 700; margin: 30px 0; }
+    .empty-cart { text-align: center; padding: 60px 20px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo"><img src="imagine_images/2zyoy.jpg" alt="Los Chingones"></a>
+      <a href="index.html">Seguir comprando</a>
+    </div>
+  </header>
+
+  <section class="section">
+    <h2 class="section-title">Tu carrito</h2>
+    <div id="cart-items"></div>
+    <div class="cart-total" id="total"></div>
+    <div style="text-align: center;" id="checkout-btn-container">
+      <a href="checkout.html" class="btn">Proceder al pago</a>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    function renderCart() {
+      const cart = getCart();
+      const container = document.getElementById('cart-items');
+      const totalEl = document.getElementById('total');
+      const checkoutBtn = document.getElementById('checkout-btn-container');
+
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío.</p><a href="productos.html" class="btn" style="margin-top:20px;">Ver productos</a></div>';
+        totalEl.textContent = '';
+        checkoutBtn.style.display = 'none';
+        return;
+      }
+
+      checkoutBtn.style.display = 'block';
+      let total = 0;
+      container.innerHTML = cart.map(item => {
+        const p = products.find(pr => pr.id === item.id);
+        if (!p) return '';
+        const sub = p.price * item.qty;
+        total += sub;
+        return `
+          <div class="cart-item">
+            <img src="${p.image}" alt="${p.name}">
+            <div style="flex:1;">
+              <h3>${p.name}</h3>
+              <p style="color:var(--muted); margin:4px 0;">$${p.price.toFixed(2)}</p>
+              <div class="qty-controls">
+                <button class="qty-btn" onclick="updateQuantity(${p.id}, ${item.qty - 1})">−</button>
+                <span style="min-width:24px; text-align:center; font-weight:600;">${item.qty}</span>
+                <button class="qty-btn" onclick="updateQuantity(${p.id}, ${item.qty + 1})">+</button>
+              </div>
+              <button class="remove-btn" onclick="removeFromCart(${p.id})">Eliminar</button>
+            </div>
+            <div style="font-weight:600; font-size:1.1rem;">$${sub.toFixed(2)}</div>
+          </div>
+        `;
+      }).join('');
+      totalEl.textContent = `Total: $${total.toFixed(2)}`;
+    }
+    renderCart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto | Los Chingones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .product-detail { max-width: 1100px; margin: 60px auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+    .product-detail img { width: 100%; border-radius: var(--radius); background: #fafafa; }
+    .qty-selector { display: flex; align-items: center; gap: 16px; margin: 24px 0; }
+    .qty-btn { width: 40px; height: 40px; border: 1px solid var(--border); background: white; border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    @media (max-width: 768px) { .product-detail { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="top-bar"><span>🔒 Compra segura</span></div>
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo"><img src="imagine_images/2zyoy.jpg" alt="Los Chingones"></a>
+      <a href="carrito.html">Carrito <span class="cart-count">0</span></a>
+    </div>
+  </header>
+
+  <div class="product-detail" id="detail"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = parseInt(params.get('id'));
+    const product = products.find(p => p.id === id) || products[0];
+    let currentQty = 1;
+
+    function renderProduct() {
+      const inCart = getCart().find(i => i.id === product.id);
+      document.getElementById('detail').innerHTML = `
+        <div>
+          <img src="${product.image}" alt="${product.name}">
+        </div>
+        <div>
+          <h1 style="font-size: 2.5rem; margin-bottom: 16px;">${product.name}</h1>
+          <div class="product-price" style="font-size: 2rem; margin-bottom: 24px;">$${product.price.toFixed(2)}</div>
+          <p style="margin-bottom: 24px; color: var(--muted); font-size: 1.1rem;">${product.description}</p>
+          
+          <div class="qty-selector">
+            <span>Cantidad:</span>
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <span id="qty-display" style="font-weight:600; min-width:24px; text-align:center;">${currentQty}</span>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+
+          <div class="actions">
+            <button class="btn" onclick="addToCart(${product.id}, currentQty)">Añadir al carrito</button>
+            ${inCart ? `<button class="btn" style="background:#dc2626;" onclick="removeFromCart(${product.id}); renderProduct();">Quitar del carrito</button>` : ''}
+          </div>
+          <p style="margin-top: 16px; font-size: 0.9rem; color: var(--muted);">Envío estimado: 3-7 días hábiles</p>
+        </div>
+      `;
+    }
+
+    function changeQty(delta) {
+      currentQty = Math.max(1, currentQty + delta);
+      document.getElementById('qty-display').textContent = currentQty;
+    }
+
+    renderProduct();
+  </script>
+</body>
+</html>
