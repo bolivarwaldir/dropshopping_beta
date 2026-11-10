@@ -416,3 +416,18 @@ footer {
 [data-theme="dark"] .dropdown-menu {
   background: #fff;
 }
+.top-bar {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  padding: 10px 20px;
+  background: #111;
+  color: #fff;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+.top-bar span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
