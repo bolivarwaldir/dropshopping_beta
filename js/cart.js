@@ -73,3 +73,15 @@ function showNotification(msg) {
 document.addEventListener('DOMContentLoaded', () => {
   updateCartCount();
 });
+
+// Wishlist
+function getWishlist() {
+  return JSON.parse(localStorage.getItem('chingones_wishlist') || '[]');
+}
+function toggleWishlist(id) {
+  let list = getWishlist();
+  if (list.includes(id)) list = list.filter(i => i !== id);
+  else list.push(id);
+  localStorage.setItem('chingones_wishlist', JSON.stringify(list));
+  showNotification(list.includes(id) ? 'Agregado a favoritos' : 'Quitado de favoritos');
+}

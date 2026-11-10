@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar perfil | Los Chingones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .profile-box { max-width: 500px; margin: 60px auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
+    .form-group input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo" style="font-weight:800; font-size:1.5rem; color:#111; text-decoration:none;">Los Chingones</a>
+    </div>
+  </header>
+
+  <div class="profile-box">
+    <h1>Editar perfil</h1>
+    <form id="profile-form">
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="full_name">
+      </div>
+      <div class="form-group">
+        <label>Foto de perfil (URL)</label>
+        <input type="url" id="avatar_url" placeholder="https://...">
+      </div>
+      <button type="submit" class="btn" style="width:100%;">Guardar cambios</button>
+    </form>
+  </div>
+
+  <script src="js/supabase.js"></script>
+  <script>
+    async function load() {
+      const user = await getCurrentUser();
+      if (!user) return location.href = 'login.html';
+      document.getElementById('full_name').value = user.user_metadata?.full_name || '';
+      document.getElementById('avatar_url').value = user.user_metadata?.avatar_url || '';
+    }
+
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const full_name = document.getElementById('full_name').value;
+      const avatar_url = document.getElementById('avatar_url').value;
+      const { error } = await supabaseClient.auth.updateUser({
+        data: { full_name, avatar_url }
+      });
+      if (error) alert(error.message);
+      else {
+        alert('Perfil actualizado');
+        location.href = 'cuenta.html';
+      }
+    });
+    load();
+  </script>
+</body>
+</html>

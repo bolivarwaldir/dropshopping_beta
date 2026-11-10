@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favoritos | Los Chingones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo" style="font-weight:800; font-size:1.5rem; color:#111; text-decoration:none;">Los Chingones</a>
+      <a href="carrito.html">Carrito <span class="cart-count">0</span></a>
+    </div>
+  </header>
+  <section class="section">
+    <h2 class="section-title">Mis favoritos</h2>
+    <div class="products-grid" id="wishlist"></div>
+  </section>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth-ui.js"></script>
+  <script>
+    function render() {
+      const ids = getWishlist();
+      const list = products.filter(p => ids.includes(p.id));
+      const container = document.getElementById('wishlist');
+      if (!list.length) {
+        container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Aún no tienes favoritos.</p>';
+        return;
+      }
+      container.innerHTML = list.map(p => `
+        <a href="producto.html?id=${p.id}" class="product-card">
+          <img src="${p.image}" alt="${p.name}">
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <div class="product-price">$${p.price.toLocaleString('es-CO')}</div>
+          </div>
+        </a>
+      `).join('');
+    }
+    render();
+  </script>
+</body>
+</html>
