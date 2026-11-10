@@ -397,3 +397,15 @@ footer {
 [data-theme="dark"] .muted {
   color: #ccc !important;
 }
+
+/* Adaptive header text */
+[data-theme="dark"] .logo,
+[data-theme="dark"] .account-btn,
+[data-theme="dark"] header a {
+  color: #ffffff !important;
+}
+[data-theme="light"] .logo,
+[data-theme="light"] .account-btn,
+[data-theme="light"] header a {
+  color: #111111 !important;
+}

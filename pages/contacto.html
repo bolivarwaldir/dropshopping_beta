@@ -6,21 +6,40 @@
   <title>Contacto | Los Chingones</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .contact-hero { background: #111; color: white; padding: 70px 20px; text-align: center; }
+    .contact-grid { max-width: 800px; margin: 40px auto; display: grid; gap: 20px; }
+    .contact-card { background: white; padding: 28px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; }
+  </style>
 </head>
 <body>
   <header>
     <div class="header-container">
-      <a href="index.html" class="logo" style="font-weight:800; font-size:1.5rem; color:#111; text-decoration:none; letter-spacing:-0.5px;">Los Chingones</a>
-      <a href="../carrito.html">Carrito <span class="cart-count">0</span></a>
+      <a href="../index.html" class="logo" style="font-weight:800; font-size:1.5rem; color:#111; text-decoration:none;">Los Chingones</a>
     </div>
   </header>
-  <section class="section" style="max-width:800px; margin:0 auto;">
-    <h1>Contacto</h1>
-    <p><strong>Correo:</strong> loschingones@correodepruebas.com</p>
-    <p><strong>WhatsApp:</strong> +57 321 000 00</p>
-    <p>Horario de atención: Lunes a sábado, 8:00 a.m. – 8:00 p.m.</p>
-    <a href="../index.html" class="btn" style="margin-top:30px;">Volver a la tienda</a>
+  <div class="contact-hero">
+    <h1>Contáctanos</h1>
+    <p>Estamos aquí para ayudarte.</p>
+  </div>
+  <section class="section">
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>📧 Correo</h3>
+        <p>loschingones@correodepruebas.com</p>
+      </div>
+      <div class="contact-card">
+        <h3>💬 WhatsApp</h3>
+        <p>+57 321 000 00</p>
+      </div>
+      <div class="contact-card">
+        <h3>🕐 Horario</h3>
+        <p>Lunes a sábado, 8:00 a.m. – 8:00 p.m.</p>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <a href="../index.html" class="btn">Volver a la tienda</a>
+    </div>
   </section>
-  <script src="../js/cart.js"></script>
 </body>
 </html>

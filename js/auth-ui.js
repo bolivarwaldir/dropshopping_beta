@@ -9,11 +9,11 @@ async function initAuthUI() {
         wrapper.innerHTML = `
           <button type="button" class="account-btn">${(user.user_metadata?.full_name || user.email.split('@')[0])} ▾</button>
           <div class="dropdown-menu">
-            <a href="cuenta.html">👤 Mi perfil</a>
-            <a href="editar-perfil.html">✏️ Editar perfil</a>
-            <a href="favoritos.html">❤️ Favoritos</a>
-            <button type="button" onclick="toggleTheme()">🌙 Cambiar tema</button>
-            <button type="button" onclick="signOut()">🚪 Cerrar sesión</button>
+            <a href="cuenta.html">🏠 Mi cuenta</a>
+            <a href="editar-perfil.html">⚙️ Editar perfil</a>
+            <a href="favoritos.html">⭐ Favoritos</a>
+            <button type="button" onclick="toggleTheme()">🌗 Cambiar tema</button>
+            <button type="button" onclick="signOut()">⏻ Cerrar sesión</button>
           </div>
         `;
         link.parentNode.replaceChild(wrapper, link);
