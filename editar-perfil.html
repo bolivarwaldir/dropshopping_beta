@@ -8,10 +8,16 @@
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .profile-box { max-width: 500px; margin: 60px auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
-    .form-group input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; }
+    .profile-container { max-width: 520px; margin: 50px auto; }
+    .profile-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+    .profile-header { height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; }
+    .avatar-wrapper { position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); }
+    .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; background: #eee; object-fit: cover; }
+    .avatar-edit { position: absolute; bottom: 0; right: 0; background: #111; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 14px; }
+    .profile-body { padding: 70px 30px 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+    .form-group input { width: 100%; padding: 14px; border: 1px solid #e5e5e5; border-radius: 12px; font-size: 1rem; }
   </style>
 </head>
 <body>
@@ -21,40 +27,59 @@
     </div>
   </header>
 
-  <div class="profile-box">
-    <h1>Editar perfil</h1>
-    <form id="profile-form">
-      <div class="form-group">
-        <label>Nombre completo</label>
-        <input type="text" id="full_name">
+  <div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar-wrapper">
+          <img id="avatar-preview" class="avatar" src="https://ui-avatars.com/api/?name=Usuario&background=111&color=fff&size=200" alt="Avatar">
+          <button class="avatar-edit" onclick="document.getElementById('avatar-url').focus()">✏️</button>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Foto de perfil (URL)</label>
-        <input type="url" id="avatar_url" placeholder="https://...">
+      <div class="profile-body">
+        <h2 style="text-align:center; margin-bottom:24px;">Editar perfil</h2>
+        <form id="profile-form">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" id="full_name" required>
+          </div>
+          <div class="form-group">
+            <label>URL de foto de perfil</label>
+            <input type="url" id="avatar-url" placeholder="https://ejemplo.com/foto.jpg">
+            <small style="color:#666; font-size:0.8rem;">Pega el enlace de una imagen (puedes usar imgur, google photos, etc.)</small>
+          </div>
+          <button type="submit" class="btn" style="width:100%; margin-top:10px;">Guardar cambios</button>
+        </form>
       </div>
-      <button type="submit" class="btn" style="width:100%;">Guardar cambios</button>
-    </form>
+    </div>
   </div>
 
   <script src="js/supabase.js"></script>
   <script>
+    const avatarInput = document.getElementById('avatar-url');
+    const preview = document.getElementById('avatar-preview');
+
+    avatarInput.addEventListener('input', () => {
+      if (avatarInput.value) preview.src = avatarInput.value;
+    });
+
     async function load() {
       const user = await getCurrentUser();
       if (!user) return location.href = 'login.html';
       document.getElementById('full_name').value = user.user_metadata?.full_name || '';
-      document.getElementById('avatar_url').value = user.user_metadata?.avatar_url || '';
+      const avatar = user.user_metadata?.avatar_url || '';
+      avatarInput.value = avatar;
+      if (avatar) preview.src = avatar;
+      else preview.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.user_metadata?.full_name || 'U')}&background=111&color=fff&size=200`;
     }
 
     document.getElementById('profile-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const full_name = document.getElementById('full_name').value;
-      const avatar_url = document.getElementById('avatar_url').value;
-      const { error } = await supabaseClient.auth.updateUser({
-        data: { full_name, avatar_url }
-      });
+      const avatar_url = avatarInput.value;
+      const { error } = await supabaseClient.auth.updateUser({ data: { full_name, avatar_url } });
       if (error) alert(error.message);
       else {
-        alert('Perfil actualizado');
+        alert('Perfil actualizado correctamente');
         location.href = 'cuenta.html';
       }
     });
