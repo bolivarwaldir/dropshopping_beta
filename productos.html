@@ -6,6 +6,11 @@
   <title>Productos | Los Chingones</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+    .filter-btn { padding: 10px 18px; border: 1px solid var(--border); background: white; border-radius: 999px; cursor: pointer; font-weight: 500; }
+    .filter-btn.active, .filter-btn:hover { background: #111; color: white; border-color: #111; }
+  </style>
 </head>
 <body>
   <div class="top-bar">
@@ -15,7 +20,7 @@
   </div>
   <header>
     <div class="header-container">
-      <a href="index.html" class="logo"><img src="imagine_images/2zyoy.jpg" alt="Los Chingones"></a>
+      <a href="index.html" class="logo" style="font-weight:700; font-size:1.4rem; color:#111; text-decoration:none;">Los Chingones</a>
       <div class="search-bar">
         <input type="text" id="search" placeholder="Buscar productos...">
       </div>
@@ -27,6 +32,7 @@
 
   <section class="section">
     <h2 class="section-title">Todos los productos</h2>
+    <div class="filters" id="filters"></div>
     <div class="products-grid" id="products"></div>
   </section>
 
@@ -37,25 +43,55 @@
   <script src="js/data.js"></script>
   <script src="js/cart.js"></script>
   <script>
-    function renderProducts(list) {
+    let currentCategory = 'todos';
+    let currentSearch = '';
+
+    function renderFilters() {
+      const container = document.getElementById('filters');
+      const cats = ['Todos', ...new Set(products.map(p => p.category))];
+      container.innerHTML = cats.map(cat => `
+        <button class="filter-btn ${cat.toLowerCase() === currentCategory ? 'active' : ''}" 
+                onclick="filterBy('${cat.toLowerCase()}')">${cat}</button>
+      `).join('');
+    }
+
+    function filterBy(cat) {
+      currentCategory = cat;
+      renderFilters();
+      renderProducts();
+    }
+
+    function renderProducts() {
+      let list = products;
+      if (currentCategory !== 'todos') {
+        list = list.filter(p => p.category.toLowerCase() === currentCategory);
+      }
+      if (currentSearch) {
+        list = list.filter(p => p.name.toLowerCase().includes(currentSearch));
+      }
       const container = document.getElementById('products');
+      if (list.length === 0) {
+        container.innerHTML = '<p style="text-align:center; grid-column:1/-1; color:#666;">No se encontraron productos.</p>';
+        return;
+      }
       container.innerHTML = list.map(p => `
         <a href="producto.html?id=${p.id}" class="product-card">
           <img src="${p.image}" alt="${p.name}">
           <div class="product-info">
             <h3>${p.name}</h3>
-            <div class="product-price">$${p.price}</div>
+            <div class="product-price">$${p.price.toLocaleString('es-CO')}</div>
           </div>
         </a>
       `).join('');
     }
-    renderProducts(products);
 
     document.getElementById('search').addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase();
-      const filtered = products.filter(p => p.name.toLowerCase().includes(q));
-      renderProducts(filtered);
+      currentSearch = e.target.value.toLowerCase();
+      renderProducts();
     });
+
+    renderFilters();
+    renderProducts();
   </script>
 </body>
 </html>

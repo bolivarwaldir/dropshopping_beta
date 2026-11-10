@@ -99,19 +99,19 @@
       <div>
         <h4>Enlaces</h4>
         <a href="productos.html">Productos</a>
-        <a href="#">Sobre nosotros</a>
-        <a href="#">Contacto</a>
+        <a href="pages/sobre-nosotros.html">Sobre nosotros</a>
+        <a href="pages/contacto.html">Contacto</a>
       </div>
       <div>
         <h4>Ayuda</h4>
-        <a href="#">Envíos</a>
-        <a href="#">Devoluciones</a>
-        <a href="#">FAQ</a>
+        <a href="pages/envios.html">Envíos</a>
+        <a href="pages/devoluciones.html">Devoluciones</a>
+        <a href="pages/faq.html">FAQ</a>
       </div>
       <div>
         <h4>Contacto</h4>
-        <p style="color: #cbd5e1;">hola@lumina.store</p>
-        <p style="color: #cbd5e1;">+1 (555) 123-4567</p>
+        <p style="color: #cbd5e1;">hola@loschingones.com</p>
+        <p style="color: #cbd5e1;">+57 321 000 00</p>
       </div>
     </div>
     <div class="footer-bottom">
@@ -143,7 +143,7 @@
             <h3>${p.name}</h3>
             <div class="product-price">
               ${p.oldPrice ? `<span class="old">$${p.oldPrice}</span>` : ''}
-              $${p.price}
+              $${p.price.toLocaleString("es-CO")}
             </div>
           </div>
         </a>
