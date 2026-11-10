@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi cuenta | Los Chingones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .account-box { max-width: 600px; margin: 60px auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+    .account-box h1 { margin-bottom: 8px; }
+    .email { color: #666; margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo" style="font-weight:700; font-size:1.4rem; color:#111; text-decoration:none;">Los Chingones</a>
+      <a href="carrito.html">Carrito <span class="cart-count">0</span></a>
+    </div>
+  </header>
+
+  <div class="account-box" id="account-content">
+    <p>Cargando...</p>
+  </div>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    async function loadAccount() {
+      const user = await getCurrentUser();
+      const container = document.getElementById('account-content');
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      container.innerHTML = `
+        <h1>Hola, ${user.user_metadata?.full_name || 'Usuario'}</h1>
+        <p class="email">${user.email}</p>
+        <p>Desde aquí podrás ver tus pedidos y datos en el futuro.</p>
+        <button class="btn" style="margin-top:30px; background:#dc2626;" onclick="signOut()">Cerrar sesión</button>
+      `;
+    }
+    loadAccount();
+  </script>
+</body>
+</html>

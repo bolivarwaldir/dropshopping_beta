@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear cuenta | Los Chingones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .auth-box { max-width: 420px; margin: 60px auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+    .auth-box h1 { margin-bottom: 24px; font-size: 1.8rem; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
+    .form-group input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; }
+    .error { color: #dc2626; font-size: 0.9rem; margin-top: 10px; display: none; }
+    .success { color: #16a34a; font-size: 0.95rem; margin-top: 10px; display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo" style="font-weight:700; font-size:1.4rem; color:#111; text-decoration:none;">Los Chingones</a>
+    </div>
+  </header>
+
+  <div class="auth-box">
+    <h1>Crear cuenta</h1>
+    <form id="register-form">
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="full_name" required>
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="password" required minlength="6">
+      </div>
+      <button type="submit" class="btn" style="width:100%;">Registrarme</button>
+      <div class="error" id="error"></div>
+      <div class="success" id="success"></div>
+    </form>
+    <p style="margin-top:20px; text-align:center;">
+      ¿Ya tienes cuenta? <a href="login.html" style="color:#111; font-weight:600;">Inicia sesión</a>
+    </p>
+  </div>
+
+  <script src="js/supabase.js"></script>
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const full_name = document.getElementById('full_name').value;
+      const errorEl = document.getElementById('error');
+      const successEl = document.getElementById('success');
+
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name } }
+      });
+
+      if (error) {
+        errorEl.textContent = error.message;
+        errorEl.style.display = 'block';
+        successEl.style.display = 'none';
+      } else {
+        successEl.textContent = '¡Cuenta creada! Revisa tu correo para confirmar (o inicia sesión si la confirmación está desactivada).';
+        successEl.style.display = 'block';
+        errorEl.style.display = 'none';
+        setTimeout(() => window.location.href = 'login.html', 2500);
+      }
+    });
+  </script>
+</body>
+</html>

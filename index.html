@@ -31,7 +31,7 @@
         <input type="text" placeholder="Buscar productos...">
       </div>
       <div class="nav-icons">
-        <a href="cuenta.html">Cuenta</a>
+        <a href="cuenta.html" id="cuenta-link">Cuenta</a>
         <a href="carrito.html">
           Carrito
           <span class="cart-count">0</span>
@@ -152,3 +152,22 @@
   </script>
 </body>
 </html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script>
+async function updateCuentaLink() {
+  const user = await getCurrentUser();
+  const links = document.querySelectorAll("a[href*=\"cuenta\"]");
+  links.forEach(link => {
+    if (user) {
+      link.textContent = "Mi cuenta";
+      link.href = "cuenta.html";
+    } else {
+      link.textContent = "Iniciar sesión";
+      link.href = "login.html";
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", updateCuentaLink);
+</script>
+
