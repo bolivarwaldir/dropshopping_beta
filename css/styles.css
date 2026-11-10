@@ -409,3 +409,10 @@ footer {
 [data-theme="light"] header a {
   color: #111111 !important;
 }
+[data-theme="dark"] .dropdown-menu a,
+[data-theme="dark"] .dropdown-menu button {
+  color: #111 !important;
+}
+[data-theme="dark"] .dropdown-menu {
+  background: #fff;
+}

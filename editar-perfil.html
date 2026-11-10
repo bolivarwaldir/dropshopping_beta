@@ -34,7 +34,7 @@
     <div class="profile-card">
       <div class="profile-header">
         <div class="avatar-wrapper">
-          <img id="avatar-preview" class="avatar" src="https://ui-avatars.com/api/?name=U&background=111&color=fff&size=200" alt="Avatar">
+          <img id="cover-preview" class="avatar" src="https://ui-avatars.com/api/?name=U&background=111&color=fff&size=200" alt="Avatar">
           <button class="avatar-edit" onclick="document.getElementById('file-input').click()">✏️</button>
         </div>
       </div>
@@ -46,7 +46,7 @@
             <input type="text" id="full_name" required>
           </div>
           <div class="form-group">
-            <label>Foto de perfil</label>
+            <label>Portada del perfil</label>
             <input type="file" id="file-input" class="file-input" accept="image/*">
             <div class="upload-btn" onclick="document.getElementById('file-input').click()">
               📷 Seleccionar imagen desde tu equipo
@@ -62,7 +62,7 @@
   <script src="js/supabase.js"></script>
   <script>
     const fileInput = document.getElementById('file-input');
-    const preview = document.getElementById('avatar-preview');
+    const preview = document.getElementById('cover-preview');
     let selectedFile = null;
 
     fileInput.addEventListener('change', (e) => {
@@ -79,7 +79,7 @@
       const user = await getCurrentUser();
       if (!user) return location.href = 'login.html';
       document.getElementById('full_name').value = user.user_metadata?.full_name || '';
-      const saved = localStorage.getItem('avatar_preview');
+      const saved = localStorage.getItem('cover_preview');
       if (saved) preview.src = saved;
       else preview.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.user_metadata?.full_name || 'U')}&background=111&color=fff&size=200`;
     }
@@ -88,7 +88,7 @@
       e.preventDefault();
       const full_name = document.getElementById('full_name').value;
       if (selectedFile) {
-        localStorage.setItem('avatar_preview', preview.src);
+        localStorage.setItem('cover_preview', preview.src);
       }
       const { error } = await supabaseClient.auth.updateUser({ data: { full_name } });
       if (error) alert(error.message);
