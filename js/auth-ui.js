@@ -12,9 +12,10 @@ async function initAuthUI() {
             ${(user.user_metadata?.full_name || user.email.split('@')[0])} ▾
           </button>
           <div class="dropdown-menu">
-            <a href="cuenta.html">🏠 Mi cuenta</a>
+            <a href="cuenta.html">👤 Mi cuenta</a>
+            <a href="pedidos.html">📦 Mis pedidos</a>
+            <a href="favoritos.html">⭐ Mis listas</a>
             <a href="editar-perfil.html">⚙️ Editar perfil</a>
-            <a href="favoritos.html">⭐ Favoritos</a>
             <button type="button" onclick="toggleTheme()">🌗 Cambiar tema</button>
             <button type="button" onclick="signOut()">⏻ Cerrar sesión</button>
           </div>
@@ -32,20 +33,17 @@ function initTheme() {
   const theme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', theme);
 }
-
 function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme') || 'light';
   const next = current === 'light' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);
 }
-
 if (location.pathname.includes('login') || location.pathname.includes('registro')) {
   supabaseClient.auth.onAuthStateChange((event) => {
     if (event === 'SIGNED_IN') location.href = 'index.html';
   });
 }
-
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initAuthUI();

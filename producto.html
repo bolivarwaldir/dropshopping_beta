@@ -6,68 +6,78 @@
   <title>Producto | Los Chingones</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .product-detail { max-width: 1100px; margin: 60px auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
-    .product-detail img { width: 100%; border-radius: var(--radius); background: #fafafa; }
-    .qty-selector { display: flex; align-items: center; gap: 16px; margin: 24px 0; }
-    .qty-btn { width: 40px; height: 40px; border: 1px solid var(--border); background: white; border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
-    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+    .product-image { width: 100%; border-radius: 16px; }
+    .qty-control { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+    .qty-btn { width: 36px; height: 36px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; }
+    .related { margin-top: 60px; }
     @media (max-width: 768px) { .product-detail { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <div class="top-bar"><span>🔒 Compra segura</span></div>
   <header>
     <div class="header-container">
-      <a href="index.html" class="logo" style="font-weight:800; font-size:1.5rem; color:#111; text-decoration:none; letter-spacing:-0.5px;">Los Chingones</a>
-      <a href="carrito.html">Carrito <span class="cart-count">0</span></a>
+      <a href="index.html" class="logo" style="font-weight:800; font-size:1.5rem; color:#111; text-decoration:none;">Los Chingones</a>
+      <div style="display:flex; gap:20px; align-items:center;">
+        <a href="productos.html">Productos</a>
+        <a href="carrito.html">Carrito <span class="cart-count">0</span></a>
+      </div>
     </div>
   </header>
-
-  <div class="product-detail" id="detail"></div>
-
+  <div id="product-container" class="product-detail">Cargando...</div>
+  <section class="section related">
+    <h2 class="section-title">También te puede interesar</h2>
+    <div class="products-grid" id="related"></div>
+  </section>
   <script src="js/data.js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/cart.js"></script>
+  <script src="js/auth-ui.js"></script>
   <script>
     const params = new URLSearchParams(location.search);
     const id = parseInt(params.get('id'));
-    const product = products.find(p => p.id === id) || products[0];
-    let currentQty = 1;
-
-    function renderProduct() {
-      const inCart = getCart().find(i => i.id === product.id);
-      document.getElementById('detail').innerHTML = `
+    const product = products.find(p => p.id === id);
+    if (!product) { document.getElementById('product-container').innerHTML = '<p>Producto no encontrado</p>'; }
+    else {
+      let qty = 1;
+      document.getElementById('product-container').innerHTML = `
+        <div><img src="${product.image}" class="product-image" alt="${product.name}"></div>
         <div>
-          <img src="${product.image}" alt="${product.name}">
-        </div>
-        <div>
-          <h1 style="font-size: 2.5rem; margin-bottom: 16px;">${product.name}</h1>
-          <div class="product-price" style="font-size: 2rem; margin-bottom: 24px;">$${product.price.toFixed(2)}</div>
-          <p style="margin-bottom: 24px; color: var(--muted); font-size: 1.1rem;">${product.description}</p>
-          
-          <div class="qty-selector">
-            <span>Cantidad:</span>
+          <h1>${product.name}</h1>
+          <p style="color:#666; margin:10px 0;">${product.category}</p>
+          <div style="font-size:1.8rem; font-weight:700; margin:16px 0;">$${product.price.toLocaleString()}</div>
+          ${product.oldPrice ? `<div style="text-decoration:line-through; color:#999;">$${product.oldPrice.toLocaleString()}</div>` : ''}
+          <p style="margin:20px 0; line-height:1.6;">${product.description}</p>
+          <div class="qty-control">
             <button class="qty-btn" onclick="changeQty(-1)">−</button>
-            <span id="qty-display" style="font-weight:600; min-width:24px; text-align:center;">${currentQty}</span>
+            <span id="qty">${qty}</span>
             <button class="qty-btn" onclick="changeQty(1)">+</button>
           </div>
-
-          <div class="actions">
-            <button class="btn" onclick="addToCart(${product.id}, currentQty)">Añadir al carrito</button>
-            ${inCart ? `<button class="btn" style="background:#dc2626;" onclick="removeFromCart(${product.id}); renderProduct();">Quitar del carrito</button>` : ''}
-          </div>
-          <p style="margin-top: 16px; font-size: 0.9rem; color: var(--muted);">Envío estimado: 3-7 días hábiles</p>
+          <button class="btn" style="width:100%; padding:16px;" onclick="addToCartWithQty()">Agregar al carrito</button>
         </div>
       `;
+      // Related
+      const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+      document.getElementById('related').innerHTML = related.map(p => `
+        <a href="producto.html?id=${p.id}" class="product-card">
+          <img src="${p.image}" alt="${p.name}">
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <div class="price">$${p.price.toLocaleString()}</div>
+          </div>
+        </a>
+      `).join('');
     }
-
     function changeQty(delta) {
-      currentQty = Math.max(1, currentQty + delta);
-      document.getElementById('qty-display').textContent = currentQty;
+      qty = Math.max(1, qty + delta);
+      document.getElementById('qty').textContent = qty;
     }
-
-    renderProduct();
+    function addToCartWithQty() {
+      for (let i = 0; i < qty; i++) addToCart(product);
+      alert('Agregado al carrito');
+    }
   </script>
 </body>
 </html>
-<script src="js/auth-ui.js"></script>
